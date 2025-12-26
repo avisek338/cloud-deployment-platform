@@ -1,11 +1,13 @@
 const express = require('express');
-const {createProject} = require('../../controller');
+const { deployProject,createProject } = require('../../controller');
+const { AuthMiddlewere } = require('../../middlewere/auth.middlewere');
 
 const router = express.Router();
 
 
-router.post('/',createProject);
-    
+router.post('/', AuthMiddlewere.verifyToken,createProject);
+router.post('/:id/deploy',AuthMiddlewere.verifyToken, deployProject);
+
 module.exports = {
-    projectRouter:router
+    projectRouter: router
 };

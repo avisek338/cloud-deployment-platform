@@ -1,5 +1,6 @@
-const {createProject}  = require('./project.controller');
+const {deployProject,createProject}  = require('./project.controller');
 
 module.exports = {
+    deployProject,
     createProject
 }
