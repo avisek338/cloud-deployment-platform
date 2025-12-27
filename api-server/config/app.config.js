@@ -3,6 +3,9 @@ AppConfig = {
      SECRET_ACCESS_KEY:`${process.env.ECS_SECERET_ACCESS_KEY}`,
      REDIS_URL:`${process.env.REDIS_URL}`,
      JWT_PUBLIC_KEY: `${process.env.JWT_PUBLIC_KEY}`,
+     KAFKA_BROKER_1: `${process.env.KAFKA_BROKER_1}`,
+     KAFKA_USERNAME: `${process.env.KAFKA_USERNAME}`,
+     KAFKA_PASSWORD: `${process.env.KAFKA_PASSWORD}`
 }
 
 module.exports = {AppConfig};

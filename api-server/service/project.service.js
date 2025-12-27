@@ -61,12 +61,17 @@ class ProjectService {
                 'PROJECT_ID': projectSlug,
                 'ECS_ACCESS_KEY_ID': AppConfig.ECS_ACCESS_KEY,
                 'ECS_SECERET_ACCESS_KEY': AppConfig.SECRET_ACCESS_KEY,
-                'REDIS_URL': AppConfig.REDIS_URL
+                'REDIS_URL': AppConfig.REDIS_URL,
+                'KAFKA_BROKER_1': AppConfig.KAFKA_BROKER_1,
+                'KAFKA_USERNAME': AppConfig.KAFKA_USERNAME,
+                'KAFKA_PASSWORD': AppConfig.KAFKA_PASSWORD
             })
             .build();
+        
         await ecsTask.execute();
         return { projectSlug, url: `http://${projectSlug}.localhost:8000` };
     }
+
     async createProject(projectDTO) {
         const project = await this.projectRepository.create({
             ...projectDTO,
