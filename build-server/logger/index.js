@@ -9,7 +9,7 @@ const myFormat = printf(({ level, message, label, timestamp }) => {
 const logger = winston.createLogger({
   level: 'info',
   format: combine(
-    label({ label: 'api server' }),
+    label({ label: 'build server' }),
     timestamp({ format: 'HH:mm:ss' }),
     colorize({ all: true }),  
     myFormat
