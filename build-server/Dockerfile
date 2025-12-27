@@ -13,6 +13,8 @@ WORKDIR /home/app
 COPY main.sh main.sh
 COPY script.js script.js
 COPY config config
+COPY services services
+COPY certs certs
 COPY logger logger
 COPY package*.json .
 

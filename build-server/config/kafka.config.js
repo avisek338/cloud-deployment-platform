@@ -1,21 +1,25 @@
 const { Kafka } = require('kafkajs');
-const appConfig = require('./app.config');
+const { KAFKA_BROKER_1, KAFKA_USERNAME, KAFKA_PASSWORD, DEPLOYMENT_ID } = require('./app.config').appConfig;
 const fs = require('fs');
+const path = require('path');
+
+const caPath = path.join(__dirname, '..', 'certs', 'ca.pem');
 
 const kafka = new Kafka({
-  clientId: `docker-builder-server-${appConfig.DEPLOYMENT_ID}`,
-  brokers: [appConfig.KAFKA_BROKER_1],
+  clientId: `docker-build-server-${DEPLOYMENT_ID}`,
+  brokers: [KAFKA_BROKER_1],
+  // ssl: {
+  //     ca: [fs.readFileSync(caPath, 'utf8')]
+  // },
   ssl: {
-    rejectUnauthorized: true,
-    ca: [fs.readFileSync('../certs/kafka-ca.pem', 'utf8')],
-    key: fs.readFileSync('../certs/kafka-access-key.pem', 'utf8'),
-    cert: fs.readFileSync('../certs/kafka-access-cert.pem', 'utf8'),
+    rejectUnauthorized: false   // bypass cert validation 
   },
   sasl: {
-    mechanism: 'plain',
-    username: appConfig.KAFKA_USERNAME,
-    password: appConfig.KAFKA_PASSWORD
+    username: KAFKA_USERNAME,
+    password: KAFKA_PASSWORD,
+    mechanism: 'plain'
   }
-});
+
+})
 
 module.exports = { kafka };

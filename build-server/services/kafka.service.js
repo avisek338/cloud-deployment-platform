@@ -8,7 +8,7 @@ class KafkaService {
   async connect() {
     try {
       await this.producer.connect();
-      logger.log('Kafka producer connected successfully');
+      logger.info('Kafka producer connected successfully');
     } catch (error) {
       logger.error('Failed to connect Kafka producer:', error);
       throw error;
@@ -19,7 +19,7 @@ class KafkaService {
     try {
       await this.producer.send({
         topic,
-        messages: [{ 
+        messages: [{
           key: 'log',
           value: JSON.stringify(message),
           timestamp: Date.now()
@@ -32,7 +32,13 @@ class KafkaService {
   }
 
   async disconnect() {
-    await this.producer.disconnect();
+    try {
+      await this.producer.disconnect();
+      logger.info('Kafka producer disconnected successfully');
+    } catch (error) {
+      logger.error('Failed to disconnect Kafka producer:', error);
+      throw error;
+    }
   }
 }
 
