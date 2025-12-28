@@ -4,10 +4,17 @@ const http = require('http');
 const { Server } = require('socket.io');
 const { PORT } = require('./config/app.config').appConfig;
 const {Consumer}  =require('./consumer');
+const router = require('./routes');
+const logger = require('./logger');
 
 //http express server
 const app = express();
 const httpServer = http.createServer(app);
+const consumer = new Consumer();
+
+app.use(express.json());
+
+app.use('/api',router)
 
 //socket server
 const io = new Server(httpServer, { cors: '*' });
@@ -19,10 +26,25 @@ io.on('connection', socket => {
     })
 })
 
-Consumer.init(io);
 
 httpServer.listen(PORT, () => {
-    console.log(`log server is listening at port ${PORT}`);
+    logger.info(`log server is listening at port ${PORT}`);
+});
+
+consumer.run(io).catch((error)=>{
+    logger.error('faild to start consumer ',error);
+})
+
+process.on('SIGINT', async () => {
+    logger.info('Shutting down gracefully...');
+    await consumer.stop();
+    process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+    logger.info('Shutting down gracefully...');
+    await consumer.stop();
+    process.exit(0);
 });
 
 

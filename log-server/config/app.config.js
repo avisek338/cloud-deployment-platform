@@ -8,7 +8,8 @@ const appConfig = {
     CLICKHOUSE_DATABASE: process.env.CLICKHOUSE_DATABASE,
     CLICKHOUSE_USERNAME: process.env.CLICKHOUSE_USERNAME,
     CLICKHOUSE_PASSWORD: process.env.CLICKHOUSE_PASSWORD,
+    JWT_PUBLIC_KEY: process.env.JWT_PUBLIC_KEY
 }
 
 
-module.exports = {appConfig};
+module.exports = { appConfig };

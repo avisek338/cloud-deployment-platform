@@ -1,4 +1,4 @@
-const logger = require('../../build-server/logger');
+const logger = require('../logger');
 const { kafka } = require('../config/kafka.config');
 const { ClickhouseConfig } = require('../config/clickhouse.config');
 const { v4: uuidv4 } = require('uuid');
@@ -52,19 +52,45 @@ async function batchLogInsert(messages, resolveOffset, commitOffsetsIfNecessary,
 
 class Consumer {
 
-    static async init(socketIo) {
-        io = socketIo;
-        const consumer = kafka.consumer({ groupId: 'log-server-group' });
-        await consumer.connect();
-        consumer.subscribe({ topic: 'container-logs', fromBeginning: true });
-
-        await consumer.run({
-            eachBatch: async function ({ batch, heartbeat, commitOffsetsIfNecessary, resolveOffset }) {
-                const messages = batch.messages;
-                await batchLogInsert(messages, resolveOffset, commitOffsetsIfNecessary, heartbeat);
-            }
-        })
+    constructor() {
+        this.consumer = kafka.consumer({ groupId: 'log-server-group' });
+        this.isRunning = false;
     }
+
+    async run(socketIo) {
+        try {
+            io = socketIo;
+            await this.consumer.connect();
+            logger.info('consumer connected to kafka');
+            this.consumer.subscribe({ topic: 'container-logs', fromBeginning: true });
+            await this.consumer.run({
+                eachBatch: async function ({ batch, heartbeat, commitOffsetsIfNecessary, resolveOffset }) {
+                    const messages = batch.messages;
+                    await batchLogInsert(messages, resolveOffset, commitOffsetsIfNecessary, heartbeat);
+                }
+            })
+            logger.info('consumer is running');
+            this.isRunning = true;
+        } catch (error) {
+            logger.error('error in running consumer ', error);
+            this.isRunning = false;
+            throw error;
+        }
+    }
+
+    async stop() {
+        if (this.isRunning) {
+            try {
+                await this.consumer.disconnect();
+                this.isRunning = false;
+                logger.info('consumer disconnected');
+            } catch (error) {
+                logger.error('failed to disconnect consumer');
+            }
+
+        }
+    }
+
 }
 
 module.exports = { Consumer };
