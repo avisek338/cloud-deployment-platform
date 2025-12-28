@@ -6,8 +6,8 @@ const projectService = new ProjectService();
 async function deployProject(req, res) {
      try {
           const projectId = req.params.id;
-          const { projectSlug, url } = await projectService.deployProject(projectId);
-          return res.json({ status: 'queued', data: { projectSlug, url } });
+          const deploymentDTO = await projectService.deployProject(projectId);
+          return res.json({ status: 'queued', data: deploymentDTO });
      } catch (error) {
           logger.error('error in creating project', error);
           return res.status(500).send({ error });
