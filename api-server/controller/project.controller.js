@@ -1,17 +1,11 @@
 const { ProjectService } = require('../service/project.service');
 const logger = require('../logger');
-const { GITHUB_REPO_REGEX } = require('../utils/regex');
 
 const projectService = new ProjectService();
 
 async function deployProject(req, res) {
      try {
           const projectId = req.params.id;
-          // const gitURL = req.body.gitURL;
-          // if (!gitURL || !GITHUB_REPO_REGEX.test(gitURL)) {
-          //      logger.error('Invalid or missing gitURL:', gitURL);
-          //      return res.status(400).send({ error: 'Invalid or missing gitURL' });
-          // }
           const { projectSlug, url } = await projectService.deployProject(projectId);
           return res.json({ status: 'queued', data: { projectSlug, url } });
      } catch (error) {

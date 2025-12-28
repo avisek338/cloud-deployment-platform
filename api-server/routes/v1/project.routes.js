@@ -4,7 +4,6 @@ const { AuthMiddlewere } = require('../../middlewere/auth.middlewere');
 
 const router = express.Router();
 
-
 router.post('/', AuthMiddlewere.verifyToken,createProject);
 router.post('/:id/deploy',AuthMiddlewere.verifyToken, deployProject);
 

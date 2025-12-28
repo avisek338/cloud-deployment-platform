@@ -31,6 +31,22 @@ class KafkaService {
     }
   }
 
+  async sendStatus(topic, message) {
+    try {
+      await this.producer.send({
+        topic,
+        messages: [{
+          key: 'status',
+          value: JSON.stringify(message),
+          timestamp: Date.now()
+        }]
+      });
+    } catch (error) {
+      logger.error('Failed to send status to Kafka:', error);
+      throw error;
+    }
+  }
+
   async disconnect() {
     try {
       await this.producer.disconnect();

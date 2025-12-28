@@ -69,7 +69,7 @@ class ProjectService {
             .build();
         
         await ecsTask.execute();
-        return { projectSlug, url: `http://${projectSlug}.localhost:8000` };
+        return { deployment_id:deployment.id,projectSlug, url: `http://${projectSlug}.localhost:8000` };
     }
 
     async createProject(projectDTO) {

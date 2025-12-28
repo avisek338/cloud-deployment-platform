@@ -1,15 +1,15 @@
 const express = require('express');
 require('dotenv').config();
-const {SocketConfig} = require('./config/socket.config');
-const {LogSubscriber} = require('./subscriber/log.subscriber');
+const { StatusConsumer } = require('./consumer/status.consumer');
 const logger = require('./logger');
 const router = require('./routes');
 
 const app = express();
-const io = SocketConfig.getInstance();
-const logSubscriber = new LogSubscriber();
+const statusConsumer = new StatusConsumer();
 
-logSubscriber.init();
+statusConsumer.start().catch((error) => {
+    logger.error(`error in starting consumer: `, error);
+});
 
 //REST connection
 app.use(express.json());
@@ -23,14 +23,17 @@ app.listen(PORT, () => {
     logger.info(`api server is listening at port ${PORT}`);
 })
 
-//socket connection
+process.on('SIGINT', async () => {
+    logger.info('Shutting down gracefully...');
+    await statusConsumer.stop();
+    process.exit(0);
+});
 
-io.on('connection', socket => {
-    socket.on('subscribe', channel => {
-        socket.join(channel)
-        socket.emit('message', `Joined ${channel}`)
-    })
-})
+process.on('SIGTERM', async () => {
+    logger.info('Shutting down gracefully...');
+    await statusConsumer.stop();
+    process.exit(0);
+});
 
-io.listen(9001, () => logger.info('Socket Server 9001'))
+
 

@@ -19,6 +19,7 @@ enum DeployementStatus {
   IN_PROGRESS
   READY
   FAIL
+  SUCCESS
 }
 
 model Project {
